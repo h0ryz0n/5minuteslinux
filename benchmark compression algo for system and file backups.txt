@@ -1,0 +1,2 @@
+## BENCHMARK compression algorythms: figuring out what's the best way to compress your backups depending on file type ##
+**work in progress**
