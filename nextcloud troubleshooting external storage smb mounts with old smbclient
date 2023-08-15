@@ -1,0 +1,32 @@
+# NEXTCLOUD TROUBLESHOOTING SMB EXTERNAL STORAGE MOUNTS WITH OLD SMBCLIENT VERSIONS
+Nextcloud seems not to mount correctly Samba shares as 'External storages'
+this happens if you have a rather old smbclient version and you disabled SMB1 for security purposes
+if you updated your OS and Nextcloud to last version, you don't need this fix
+
+#the story
+after doing some research, turns out that when disabling SMB1 (min protocol = SMB2 in smb.conf),
+some older smbclient versions (4.5.x) just can't auto negotiate protocol properly, unless forced with -m SMB2/3
+results are either NT_STATUS_INVALID_PARAMETER_MIX or NT_STATUS_INVALID_NETWORK_RESPONSE
+I tested with either smbclient 4.5.16(deb9) and smbclient 4.9.5(deb10) on same Samba servers
+with smbclient 4.9.5 the problem goes away, regardless of smb server version
+
+#a quick & dirty fix
+this workaround works in debian 9 + smbclient with SMB1 disabled, simply forces a SMB protocol when mounting External storages
+forcing a SMB3 mount fixes the NT_STATUS_INVALID_PARAMETER_MIX/INVALID_NETWORK_RESPONSE
+which prevents Nextcloud External Storages to mount SMB2/3 shares with some old smbclient versions (4.5.x)
+these versions seem to have issues on auto-negotiation when SMB1 is disabled (min protocol = SMB2 in /etc/samba/smb.conf)
+
+
+#TLDR
+you just need to change a row in a nextcloud php file and restart the web server
+
+*in /srv/www/nextcloud/apps/files_external/3rdparty/icewind/smb/src/Wrapped/Share.php:
+
+        protected function getConnection() {
+                $command = sprintf(
+                // DIRTY FIX to make it work with SMBv2/3
+                //      '%s%s -t %s %s %s %s',
+                        '%s%s -t %s %s %s %s -m SMB3',
+                // END OF FIX
+
+
