@@ -1,0 +1,45 @@
+#NFS: minimalistic no-hassle no-frills file server for selective sharing on your LAN
+tested on debian 9+
+for more infos: "man nfs"
+
+#assuming you have:
+- root access
+- typed 'rpcinfo -p' and verified that "mountd" and "nfs" are displayed
+- some mounts you want to share on /media/*
+- as an example, server ip as 192.168.0.5
+
+# SERVER SIDE #
+
+#nfs installation
+apt install nfs-kernel-server
+
+#nfs configuration
+*in /etc/exports:
+
+#read only export for everyone on this network
+/media/HD/files		192.168.0.0/24(ro)
+#read write for another net with selected class ips (1-14)
+/media/HD/upload    192.168.1.0/28(rw)
+#you can put multiple ip in one row
+/media/HD/images   192.168.0.0/24(ro) 192.168.1.0(ro)
+
+#some useful options
+no_subtree_check: speeds up transfers
+sync: secure file writes
+root_squash: (default) secure files UID
+
+
+# CLIENT SIDE #
+
+#linux users
+mkdir -p /mount/NFS_FILES
+mount -t nfs 192.168.0.5:/media/HD/files /mount/NFS_FILES
+
+#windows lazy users
+powershell nfs install:
+Install -WindowsFeature -Name IFS-Client
+mounting:
+mount  \\192.168.0.5\media\HD\files V:
+
+#mac users
+google it.
