@@ -1,0 +1,2 @@
+## setting up a minimalistic Terraria headless game server on some distros ##
+**work in progress*
