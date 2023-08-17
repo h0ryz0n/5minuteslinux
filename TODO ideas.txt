@@ -1,0 +1,7 @@
+benchmark compression algo for system and file backups
+  xz/std/lz4 on different data types 
+economy tuning your server to cut down energy costs
+shelltricks keep your app running when you log out.txt
+  different ways (with some theory) to keep your app running even if you log out from your system
+
+  
