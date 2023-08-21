@@ -1,2 +1,73 @@
-## setting up a minimalistic Terraria headless game server on some distros ##
-**work in progress*
+## setting up a minimalistic Terraria headless game server on some distros, tested on Alpine and Debian ##
+
+# add a dedicated user for the game
+useradd -r -d /srv/terraria -s /bin/false terraria
+# create directory and files
+mkdir /srv/terraria /srv/terraria/Worlds
+touch /srv/terraria/serverconfig.txt
+# set permissions
+chown -R terraria:terraria /srv/terraria
+chmod -R 600 /srv/terraria/serverconfig.txt
+
+*in /srv/terraria/serverconfig.txt
+maxplayers=8
+port=7777
+motd=Welcome!
+worldpath=/srv/terraria/Worlds/
+world=/srv/terraria/Worlds/world01.wld
+worldname=World Name
+difficulty=1
+autocreate=1
+language=it-IT
+npcstream=60
+password=yourServerPassword
+
+# read https://terraria.fandom.com/wiki/Server
+# to know how to customize server options
+
+## how to automatically run at system boot ##
+
+# for OPENRC daemon (ex. if you are using Alpine)
+
+*in /etc/init.d/terrariaserver:  (chmod +x when finished)
+
+#!/sbin/openrc-run
+
+name="Terraria Server"
+command="/opt/terraria/TerrariaServer.bin.x86_64"
+command_args="-config /srv/terraria/serverconfig.txt"
+pidfile="/run/$RC_SVCNAME.pid"
+command_background=true
+
+depend() {
+  need net
+}
+
+
+# for SYSTEMD daemon (Debian, *buntu, etc..)
+
+*in /etc/systemd/system/terrariaserver.service :
+
+[Unit]
+Description="Terraria server"
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=terraria
+Group=terraria
+Type=simple
+Restart=always
+RestartSec=10
+ExecStart=/opt/terraria/TerrariaServer.bin.x86_64 -config /srv/terraria/serverconfig.txt
+
+[Install]
+WantedBy=multi-user.target
+
+
+## for an interactive version
+# first install screen
+$ apt install screen / apk add screen
+# then add "screen -m" before the game server executable string such as screen -m /opt/terraria...
+# to access to game server shell:
+$ sudo -u terraria screen -x
