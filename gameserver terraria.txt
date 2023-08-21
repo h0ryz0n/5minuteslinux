@@ -25,6 +25,7 @@ password=yourServerPassword
 # read https://terraria.fandom.com/wiki/Server
 # to know how to customize server options
 
+
 ## how to automatically run at system boot ##
 
 # for OPENRC daemon (ex. if you are using Alpine)
