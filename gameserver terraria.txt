@@ -1,4 +1,4 @@
-## setting up a minimalistic Terraria headless game server on some distros, tested on Alpine and Debian ##
+## setting up a minimalistic Terraria headless game server, tested on Alpine and Debian ##
 
 # add a dedicated user for the game
 useradd -r -d /srv/terraria -s /bin/false terraria
