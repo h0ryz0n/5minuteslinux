@@ -1,2 +1,6 @@
 ## setting up a minimalistic Factorio headless game server ##
+*src*
+https://github.com/wube/factorio-data
+https://wiki.factorio.com/Application_directory
+https://wiki.factorio.com/Multiplayer
 *work in progress*
