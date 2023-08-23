@@ -1,3 +1,4 @@
+fileserver HFS minimal
 benchmark compression algo for system and file backups
   xz/std/lz4 on different data types 
 economy tuning your server to cut down energy costs
