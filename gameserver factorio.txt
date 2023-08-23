@@ -25,10 +25,9 @@ depending on your startup daemon, use this execution string:
 $ sudo -u factorio /opt/factorio/bin/x64/factorio --start-server /srv/factorio/saves/savefile.zip
 ## to execute on start with interactive console
 use this execution string
-$ sudo -u factorio /usr/bin/screen -dmS factorioserver /opt/factorio/bin/x64/factorio --start-server /srv/factorio/saves/savefile.zip
+$ sudo -u factorio /usr/bin/screen -dm /opt/factorio/bin/x64/factorio --start-server /srv/factorio/saves/savefile.zip
 to access game server console:
-$ sudo -u factorio screen -x factorioserver
-for multiple servers, you have to use different screen names (-S ...) and configure different listening ports
+$ sudo -u factorio screen -x
 
 *src*
 https://github.com/wube/factorio-data
