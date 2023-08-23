@@ -1,6 +1,35 @@
 ## setting up a minimalistic Factorio headless game server ##
+
+## initial setup
+download game server & unzip to /opt/factorio
+create system user with nohome and login /bin/false
+create directory /srv/factorio + chown factorio + set permissions
+cp /opt/factorio/server-settings.json /srv/factorio/server-settings.json
+
+## configuration files minimal settings, for more customizations refer to source links
+*in config-path.cfg:
+use-system-read-write-data-directories=true
+*in config/config.ini
+write-data=/srv/factorio
+*in /srv/factorio/server-settings.json
+you can set server name/password, visibility, etc. but default settings are good
+
+## create savegame + server first run
+/opt/factorio/bin/x64/factorio --create /srv/factorio/saves/my-save.zip
+/opt/factorio/bin/x64/factorio --start-server ./saves/my-save.zip
+
+## to execute on start
+install 'screen'
+depending on your startup daemon, use this execution string:
+$ sudo -u factorio /opt/factorio/bin/x64/factorio --start-server /srv/factorio/saves/savefile.zip
+## to execute on start with interactive console
+use this execution string
+$ sudo -u factorio /usr/bin/screen -dmS factorioserver /opt/factorio/bin/x64/factorio --start-server /srv/factorio/saves/savefile.zip
+to access game server console:
+$ sudo -u factorio screen -x factorioserver
+for multiple servers, you have to use different screen names (-S ...) and configure different listening ports
+
 *src*
 https://github.com/wube/factorio-data
 https://wiki.factorio.com/Application_directory
 https://wiki.factorio.com/Multiplayer
-*work in progress*
