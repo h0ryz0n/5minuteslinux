@@ -1,7 +1,8 @@
 ## setting up a minimalistic Factorio headless game server ##
 
 ## initial setup
-download game server & unzip to /opt/factorio
+download game server on factorio.com/download
+unzip to /opt/factorio
 create system user with nohome and login /bin/false
 create directory /srv/factorio + chown factorio + set permissions
 cp /opt/factorio/server-settings.json /srv/factorio/server-settings.json
