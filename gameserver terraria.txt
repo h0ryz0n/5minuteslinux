@@ -69,6 +69,6 @@ WantedBy=multi-user.target
 ## for an interactive version
 # first install screen
 $ apt install screen / apk add screen
-# then add "screen -m" before the game server executable string such as screen -m /opt/terraria...
+# then add "screen -dmS terrariaserver" before the game server executable string
 # to access to game server shell:
-$ sudo -u terraria screen -x
+$ sudo -u terraria screen -x terrariaserver
