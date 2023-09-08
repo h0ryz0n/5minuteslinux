@@ -1,0 +1,31 @@
+#MQTT: minimalistic no-hassle no-frills mqtt messaging server for resource-constraint systems
+OS: tested on alpine linux (alpine-virt kernel on a minimal vm), but works on other systems as well
+REQUIREMENTS: 512MB ram + 500MB disk space
+
+# INSTALL #
+#update everything
+apk update && apk upgrade
+#install mosquitto + autostart on ALPINE openrc
+apk add mosquitto mosquitto-openrc
+rc-update add mosquitto boot
+#install mosquitto + autostart on DEBIAN-based, usually systemd
+apt install mosquitto
+systemctl enable mosquitto
+
+# CONFIGURE #
+*in /etc/mosquitto/mosquitto.conf -> decomment and complete
+#listening address & port:
+listener 0.0.0.0 1883
+#if you want to use only ipv4:
+socket_domain ipv4
+
+# CLIENT SIDE #
+#linux users 
+mosquitto_sub -h $ipaddress -t $topic
+mosquitto_pub -h $ipaddress -t $topic -m $message
+
+#windows lazy users
+https://mqttx.app/ -> one-click-win install and test
+
+# MORE #
+for security/authentication you can use SSL/TLS and user accounts, for more infos: https://mosquitto.org/man/mosquitto-conf-5.html
