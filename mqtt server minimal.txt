@@ -21,8 +21,8 @@ socket_domain ipv4
 
 # CLIENT SIDE #
 #linux users 
-mosquitto_sub -h $ipaddress -t $topic
-mosquitto_pub -h $ipaddress -t $topic -m $message
+mosquitto_sub -h $ipaddress -p $port -t $topic
+mosquitto_pub -h $ipaddress -p $port -t $topic -m $message
 
 #windows lazy users
 https://mqttx.app/ -> one-click-win install and test
