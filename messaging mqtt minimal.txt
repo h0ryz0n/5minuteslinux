@@ -15,7 +15,7 @@ systemctl enable mosquitto
 # CONFIGURE #
 *in /etc/mosquitto/mosquitto.conf -> decomment and complete
 #listening address & port:
-listener 0.0.0.0 1883
+listener 1883 0.0.0.0
 #if you want to use only ipv4:
 socket_domain ipv4
 
