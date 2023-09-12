@@ -1,5 +1,10 @@
 ## this is a very quick tutorial about building a minimalist vpn with a resource constraint linux machine or vm ##
 
+# TECHNICAL NOTES:
+as Wireguard implements a P2P oriented vpn, it may not be technically correct to talk about server and client entities
+but some scenarios have one or few reachable peers with static IPs/DDNS and a bunch of road warriors with dynamic IPs behind one or multiple NATs
+hereby we will name "server" a primary peer which is reachable and "client" as an entity behind NAT, not directly reachable by other peers
+
 # minimum requirements:
 1 vCore, 128 MB ram, 1 GB disk space
 # with 1 tunnel and <5 clients connected, resources in use are
@@ -12,6 +17,8 @@ kernel  6.1.41-0-virt
 # packages needed:
 wireguard-tools
 iptables
+
+# SERVER / PRIMARY PEER
 
 # generate node keys and set chmod 600
 wg genkey > privatekey
@@ -48,6 +55,7 @@ echo module wireguard +p > /sys/kernel/debug/dynamic_debug/control
 
 
 ## OPTIONAL: shall wg0 node forward traffic?
+# this will make this peer act as a router for a star-like topology with road warriors
 
 # enable forwarding, 'sysctl -p' or reboot to apply
 in /etc/sysctl.conf
@@ -63,10 +71,29 @@ in /etc/wireguard/wg0.conf:
 ...
 #in case of static IPs, SNAT is faster than MASQUERADE (refer to netfilter documentation)
 PreUp = iptables -t nat -A POSTROUTING -s 172.16.0.0/24 -d $dst_zone_class -o $dst_zone -j SNAT --to-source 172.16.0.1
-#following are needed if you have a DROP default policy of FORWARD chain
+#following rows are needed if you have a DROP default policy of FORWARD chain
+#allow routing from vpn to another zone (usually a lan zone) + allow reverse traffic if connection is already established
 PreUp = iptables -A FORWARD -i wg0 -o $dst_zone -j ACCEPT
 PreUp = iptables -A FORWARD -i $dst_zone -o wg0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+#OPTIONAL: allow routing inside vpn zone
+PreUp = iptables -A FORWARD -i wg0 -o wg0 -j ACCEPT
 
 # quick hardening:
 put a more restricting FORWARD and POSTROUTING criteria
 put DROP policy as INPUT and restricting ingress traffic on wg interface
+
+# CLIENT SIDE
+
+[Interface]
+PrivateKey = .....
+ListenPort = .....
+
+[Peer1]
+PublicKey = peer1pubkey
+Endpoint = peer1host:port
+#AllowedIPs may vary depending on your configuration, here some examples:
+AllowedIPs = 172.16.0.0/24, 192.168.90.0/24   <--- reaches entire vpn network and a internal zone, need the destination peer to act as a router
+AllowedIPs = 172.16.0.101/32  <--- reaches a single peer
+
+[Peer2]
+......
