@@ -1,0 +1,13 @@
+# here some firewall tricks to work easy
+
+# PERSISTENT RULES ON REBOOT
+
+# Alpine and OpenRC based
+rc-update add iptables
+iptables save
+
+# Debian and Systemd based
+#save rules
+iptables-save > /etc/iptables/rules.v4
+#restore rules
+iptables-restore < /etc/iptables/rules.v4
