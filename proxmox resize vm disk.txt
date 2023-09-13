@@ -1,0 +1,12 @@
+## proxmox dirty tricks: resize a partition on the fly  ##
+
+assuming you want to add +1GB on a vm with vmid '102', vmdisk 'scsi0' and partition in the vm is /dev/sda3
+
+# from proxmox shell
+qm resize 102 scsi0 +1G
+# start shell on vm, you may need to install e2fsprogs/e2fsprogs-extra package
+cfdisk /dev/sda
+# from cfdisk: select partition -> Resize -> write new size, the select Write and go back to shell
+resize2fs /dev/sda3
+# reboot the machine
+# it's wise to do a fsck on the resized file system
