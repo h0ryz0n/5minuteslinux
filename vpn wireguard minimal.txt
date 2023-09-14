@@ -94,6 +94,7 @@ Endpoint = peer1host:port
 #AllowedIPs may vary depending on your configuration, here some examples:
 AllowedIPs = 172.16.0.0/24, 192.168.90.0/24   <--- reaches entire vpn network and a internal zone, need the destination peer to act as a router
 AllowedIPs = 172.16.0.101/32  <--- reaches a single peer
+DNS = 192.168.90.1 <--- OPTIONAL: if you want to use a DNS resolver inside your VPN
 
 [Peer2]
 ......
