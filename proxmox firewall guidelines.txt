@@ -1,24 +1,33 @@
-# a quick guide to setting firewall to protect machines or your network with ProxMox #
+# fast & simple guidelines to protect your guests and setting firewall for your network with ProxMox #
+# TODO: more general networking guide with iptables-nftables command lines
 
-## INTRODUCTION
-provided ProxMox is netfilter based, you can use the builtin firewall for simple configuration, to offload some packet analysis from your router/gw cpu
-# todo: more general guide with iptables-nftables command lines
+## TRADE-OFFS:
 
-## VM vs CT
-for a better protection, it's suggested to use VM instead of CT/LXC, because full virtualization provides a better decoupling from the host machine
-but it needs more resources, hence is always a trade-off
+# HYPERVISOR FIREWALL vs GATEWAY FIREWALL for GUESTS
+PROXMOX FIREWALL - netfilter based, good for simple configuration, offloads packet analysis from your router/gw
+GATEWAY FIREWALL - best for complex configurations, especially if equipped with good firewall software that can be updated (pfSense, IPFire...)
 
-## DROP vs REJECT
-REJECT gives an answer to the packet (like "No reachable")
-DROP just 
+# VM vs CT
+VM provides better decoupling from host machine, but uses more resources
+CT/LXC are faster to deploy and handle
 
-assuming your guests have same IP class of your internal network
+# DROP vs REJECT
+REJECT answers back (ex. ICMP type 3 - 'Destination unreachable'), making aware of target's online state
+DROP just ignores the packet, the sender waits until timeout
+
+# assuming your guests have same IP class of your internal network
 
 # total isolation (trivial)
 default block all IN
 default block all OUT
 
+# nearly-total isolation from LAN (dmz) - need external dns server (ex. 1.1.1.1)
+allow IN ports (exposed services)
+block all OUT to lan
+default allow all OUT
+
 # minimal access (dmz-like)
+allow IN ports (exposed services)
 allow ssh IN from lan
 allow dns OUT to lan-gw/dns server
 block OUT to lan
@@ -29,4 +38,3 @@ allow ssh IN from lan
 allow tcp IN 8006 from lan
 allow dns OUT to lan-gw/dns server
 default allow all OUT
-
