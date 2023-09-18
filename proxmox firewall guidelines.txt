@@ -25,6 +25,7 @@ default block all OUT
 allow IN ports (exposed services)
 block all OUT to lan
 default allow all OUT
+default block all IN
 
 # minimal access (dmz-like)
 allow IN ports (exposed services)
@@ -32,9 +33,10 @@ allow ssh IN from lan
 allow dns OUT to lan-gw/dns server
 block OUT to lan
 default allow all OUT
+default block all IN
 
 # minimal proxmox server management
 allow ssh IN from lan
 allow tcp IN 8006 from lan
-allow dns OUT to lan-gw/dns server
 default allow all OUT
+default block all IN
