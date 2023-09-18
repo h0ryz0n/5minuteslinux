@@ -1,0 +1,32 @@
+# a quick guide to setting firewall to protect machines or your network with ProxMox #
+
+## INTRODUCTION
+provided ProxMox is netfilter based, you can use the builtin firewall for simple configuration, to offload some packet analysis from your router/gw cpu
+# todo: more general guide with iptables-nftables command lines
+
+## VM vs CT
+for a better protection, it's suggested to use VM instead of CT/LXC, because full virtualization provides a better decoupling from the host machine
+but it needs more resources, hence is always a trade-off
+
+## DROP vs REJECT
+REJECT gives an answer to the packet (like "No reachable")
+DROP just 
+
+assuming your guests have same IP class of your internal network
+
+# total isolation (trivial)
+default block all IN
+default block all OUT
+
+# minimal access (dmz-like)
+allow ssh IN from lan
+allow dns OUT to lan-gw/dns server
+block OUT to lan
+default allow all OUT
+
+# minimal proxmox server management
+allow ssh IN from lan
+allow tcp IN 8006 from lan
+allow dns OUT to lan-gw/dns server
+default allow all OUT
+
