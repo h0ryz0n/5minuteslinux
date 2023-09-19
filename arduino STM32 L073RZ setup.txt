@@ -1,10 +1,18 @@
-# STM32 Nucleo 64 L073RZ Programming Framework configuration - for Linux #
+# STM32 Nucleo 64 L073RZ Programming Framework quick configuration for Linux #
 # tested on Ubuntu/Debian
 
 ## SRC & LINKS
 https://www.stm32duino.com/viewtopic.php?t=247
 https://github.com/stm32duino/Arduino_Core_STM32/wiki/Upload-methods
+
+## DOWNLOAD FLASH SOFTWARE
 https://www.st.com/en/development-tools/stm32cubeprog.html
+
+unzip & install as a user, tipically:
+./SetupSTM32CubeProgrammer-2.xx.0.linux
+
+add bin path to $PATH, assuming default installation path:
+export PATH=$PATH:/home/$(whoami)/STMicroelectronics/STM32Cube/STM32CubeProgrammer
 
 
 ## ARDUINO IDE
