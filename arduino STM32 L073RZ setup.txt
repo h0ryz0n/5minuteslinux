@@ -1,12 +1,14 @@
 # STM32 Nucleo 64 L073RZ Programming Framework configuration - for Linux #
 # tested on Ubuntu/Debian
 
-# SRC
+## SRC & LINKS
 https://www.stm32duino.com/viewtopic.php?t=247
 https://github.com/stm32duino/Arduino_Core_STM32/wiki/Upload-methods
+https://www.st.com/en/development-tools/stm32cubeprog.html
 
 
-# Arduino IDE - Additional Boards manager URLs:
+## ARDUINO IDE
+# Additional Boards manager URLs:
 https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json
 
 Compilation options:
@@ -19,7 +21,8 @@ USB Support -> CDC generic Serial
 U(S)ART Support -> Enabled
 USB Speed -> Low/Full Speed
 
-# OS SETTINGS:
+
+## OS SETTINGS:
 
 *in /etc/udev/rules.d/45-maple.rules:
 # The first lines are for Maple. The last line defines your board (the info reported by dfu-util -l or from running dmesg
@@ -34,8 +37,10 @@ USB Speed -> Low/Full Speed
 # tell udev to reload the rules:
 sudo udevadm control --reload-rules
 
-# device modality and dmesg output
-DEVICE is in NORMAL MODE [for serial output etc..]:
+
+## DEVICE MODALITY AND DMESG OUTPUT
+
+# DEVICE is in NORMAL MODE [for serial output etc..]:
 New USB device found, idVendor=0483, idProduct=5740, bcdDevice= 2.00
 New USB device strings: Mfr=1, Product=2, SerialNumber=3
 Product: NUCLEO_L073RZ CDC in FS Mode
@@ -43,7 +48,7 @@ Manufacturer: STMicroelectronics
 SerialNumber: .......
 cdc_acm 2-1.1.1.1:1.0: ttyACM0: USB ACM device
 
-DEVICE is in BOOTLOADER MODE [for flashing -> shutdown, hold BOOT or BOOT-RESET (depending on the device), connect to usb, release buttons]
+# DEVICE is in BOOTLOADER MODE [for flashing -> shutdown, hold BOOT or BOOT-RESET (depending on the device), connect to usb, release buttons]
 New USB device found, idVendor=0483, idProduct=df11, bcdDevice=22.00
 New USB device strings: Mfr=1, Product=2, SerialNumber=3
 Product: STM32  BOOTLOADER
