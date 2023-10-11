@@ -1,4 +1,4 @@
-### OpenSSL certificates tricks & quick commands
+### OpenSSL keys & certificates tricks
 
 # generate a private key using 'genpkey' (2048 bits default if not specified)
 openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits -outform PEM -out ./privatekey.pem
