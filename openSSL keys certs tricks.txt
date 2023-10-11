@@ -1,0 +1,31 @@
+### OpenSSL certificates tricks & quick commands
+
+# generate a private key using 'genpkey' (2048 bits default if not specified)
+openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits -outform PEM -out ./privatekey.pem
+openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -outform PEM -out ./privatekey.pem
+openssl genrsa -out privatekey.pem
+openssl genrsa -out privatekey.pem 2048
+
+# generate public key
+openssl pkey -pubout -in privatekey.pem -out publickey.pem
+openssl rsa -pubout -in privatekey.pem -out publickey.pem
+
+# public key should start with -----BEGIN RSA PRIVATE KEY-----
+# private key with  -----BEGIN PUBLIC KEY-----
+
+# is the private key correct?
+openssl rsa -check -in privatekey.pem
+
+# does a public key belong to a private key?
+openssl rsa -modulus -noout -in publickey.pem
+openssl rsa -modulus -noout -in privatekey.pem
+
+# ...you can check MD5 hash instead of modulus
+openssl rsa -modulus -noout -in publickey.pem | openssl md5
+openssl rsa -modulus -noout -in privatekey.pem | openssl md5
+
+## sources and additional info:
+https://www.openssl.org/docs/manmaster/man1/openssl.html
+https://rietta.com/blog/openssl-generating-rsa-key-from-command/
+https://gist.github.com/Hakky54/b30418b25215ad7d18f978bc0b448d81
+https://gist.github.com/p3t3r67x0/5313b0d7abc25e06c2d78f8b767d4bc3
