@@ -13,19 +13,51 @@ apt install mosquitto
 systemctl enable mosquitto
 
 # CONFIGURE #
-*in /etc/mosquitto/mosquitto.conf -> decomment and complete
+*in /etc/mosquitto/mosquitto.conf
 #listening address & port:
 listener 1883 0.0.0.0
 #if you want to use only ipv4:
 socket_domain ipv4
 
+# AUTH: USER AND PASSWORD #
+#create file and put user/password
+mosquitto_passwd -c /etc/mosquitto/pwfile.mosquitto user1 password1
+*in /etc/mosquitto/mosquitto.conf
+allow_anonymous false
+password_file /etc/mosquitto/pwfile.mosquitto
+
+# AUTH: TLS SUPPORT AND CERTIFICATES
+# you need: server keys, server crt signed by a CA and CA.crt on all nodes if CA is self/private
+# assuming you got all files in /etc/mosquitto/certs
+*in /etc/mosquitto/mosquitto.conf
+certfile /etc/mosquitto/certs/tramonti.ui.lan.crt
+keyfile /etc/mosquitto/certs/privatekey.pem
+dhparamfile /etc/mosquitto/certs/dhparam.pem 
+cafile /etc/mosquitto/certs/ca.crt
+
+# DEBUG
+to see all messages in syslog:
+*in /etc/mosquitto/mosquitto.conf
+log_type all
+connection_messages true
+
+
 # CLIENT SIDE #
 #linux users 
-mosquitto_sub -h $ipaddress -p $port -t $topic
-mosquitto_pub -h $ipaddress -p $port -t $topic -m $message
+mosquitto_sub -h mqttserver.or.ip -p 1883 -t "topic"
+mosquitto_pub -h mqttserver.or.ip -p 1883 -t "topic" -m "testmessage"
+#..with tls (-d=debug, -v=verbose, -q=QoS, #=topic-wildcard)
+mosquitto_sub --cafile /etc/certs/ca.crt -v -d -p 8883 --username "user" --pw "pass" -q 2 -h "server.domain.com" -t "#"
+mosquitto_pub --cafile /etc/certs/ca.crt -d -p 8883 --username "user" --pw "pass" -q 2 -h "server.domain.com" -t "topic" -m "test"
+#..with tls without domain check on certificate (fqdn different on server.crt)
+mosquitto_sub --insecure --cafile /etc/certs/ca.crt -v -d -p 8883 --username "user" --pw "pass" -q 2 -h "server.domain.com" -t "#"
+mosquitto_pub --insecure --cafile /etc/certs/ca.crt -d -p 8883 --username "user" --pw "pass" -q 2 -h "server.domain.com" -t "topic" -m "test"
+
 
 #windows lazy users
 https://mqttx.app/ -> one-click-win install and test
+
+
 
 # MORE #
 for security/authentication you can use SSL/TLS and user accounts, for more infos: https://mosquitto.org/man/mosquitto-conf-5.html
