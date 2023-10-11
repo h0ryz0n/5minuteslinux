@@ -24,8 +24,12 @@ openssl rsa -modulus -noout -in privatekey.pem
 openssl rsa -modulus -noout -in publickey.pem | openssl md5
 openssl rsa -modulus -noout -in privatekey.pem | openssl md5
 
+# generate dh parameters
+openssl dhparam -out dhparam.pem 2048
+
 ## sources and additional info:
 https://www.openssl.org/docs/manmaster/man1/openssl.html
 https://rietta.com/blog/openssl-generating-rsa-key-from-command/
 https://gist.github.com/Hakky54/b30418b25215ad7d18f978bc0b448d81
 https://gist.github.com/p3t3r67x0/5313b0d7abc25e06c2d78f8b767d4bc3
+https://www.digitalocean.com/community/tutorials/openssl-essentials-working-with-ssl-certificates-private-keys-and-csrs
