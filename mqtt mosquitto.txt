@@ -32,9 +32,13 @@ allow_anonymous false
 password_file /etc/mosquitto/pwfile
 
 # AUTH: TLS SUPPORT AND CERTIFICATES
-# you need: server keys, server crt signed by a CA and CA.crt on all nodes if CA is self/private
+# you need: server keys, server crt signed by a CA
+# if CA is self/private, you need CA.crt on all nodes
 # assuming you got all files in /etc/mosquitto/certs
 *in /etc/mosquitto/mosquitto.conf
+#switch port on listener
+listener 8883 0.0.0.0
+#add certs path/file
 certfile /etc/mosquitto/certs/domain.crt
 keyfile /etc/mosquitto/certs/privatekey.pem
 dhparamfile /etc/mosquitto/certs/dhparam.pem 
