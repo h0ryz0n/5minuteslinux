@@ -54,8 +54,8 @@ connection_messages true
 *in /etc/mosquitto/mosquitto.conf
 #heap memory limit: drop message and disconnect a node if message processing needs more than n bytes, set 256MB
 memory_limit 268435456
-#maximum payload allowed for message, default is 268435455 bytes (256MB) by MQTT protocol, you can set a lower one es. 128MB
-message_size_limit 134217728
+#maximum payload allowed for message: drop any higher than 268435455 bytes (256MB) by MQTT protocol, you can set a lower one es. 1MB
+message_size_limit 1048576
 
 # CLIENT SIDE #
 #linux users 
