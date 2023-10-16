@@ -50,6 +50,12 @@ to see all messages in syslog:
 log_type all
 connection_messages true
 
+# SOME PRACTICES FOR MEMORY HANDLING IN RESOURCE CONSTRAINT SYSTEMS
+*in /etc/mosquitto/mosquitto.conf
+#heap memory limit: drop message and disconnect a node if message processing needs more than n bytes, set 256MB
+memory_limit 268435456
+#maximum payload allowed for message, default is 268435455 bytes (256MB) by MQTT protocol, you can set a lower one es. 128MB
+message_size_limit 134217728
 
 # CLIENT SIDE #
 #linux users 
