@@ -20,11 +20,16 @@ listener 1883 0.0.0.0
 socket_domain ipv4
 
 # AUTH: USER AND PASSWORD #
-#create file and put user/password
-mosquitto_passwd -c /etc/mosquitto/pwfile.mosquitto user1 password1
+#create file and put user with password interactively
+mosquitto_passwd -c /etc/mosquitto/pwfile user1
+#...or batch
+mosquitto_passwd -c /etc/mosquitto/pwfile user1 password1
+#add user
+mosquito_passwd /etc/mosquitto/pwfile user2
+#enable user/pass authentication in mosquitto daemon -> this disables anonymous access
 *in /etc/mosquitto/mosquitto.conf
 allow_anonymous false
-password_file /etc/mosquitto/pwfile.mosquitto
+password_file /etc/mosquitto/pwfile
 
 # AUTH: TLS SUPPORT AND CERTIFICATES
 # you need: server keys, server crt signed by a CA and CA.crt on all nodes if CA is self/private
