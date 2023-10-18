@@ -1,0 +1,47 @@
+# quick deployment of PlatformIO Remote Agent
+# for infos: https://docs.platformio.org/en/latest/plus/pio-remote.html
+# tested on Linux Alpine 3.18 container, which is the most suitable
+
+#get some tasks done as root
+apk update && apk upgrade && apk add python3
+#create a new user for the platformio agent, you can switch to a system/nologin user later for hardening
+adduser platform
+passwd platform
+#install pio remote as a user
+su platform
+cd 
+wget https://raw.githubusercontent.com/platformio/platformio-core-installer/master/get-platformio.py
+python3 ./get-platformio.py
+~/.platformio/penv/bin/pio upgrade
+~/.platformio/penv/bin/pio remote
+#register a PlatformIO account
+~/.platformio/penv/bin/pio account register -u "USERNAME" -p "PASSWORD" -e EMAIL@PROVIDER.IT --firstname FIRSTNAME --lastname LASTNAME
+#check your email, verify and login
+~/.platformio/penv/bin/pio account login -u "USERNAME" -p "PASSWORD"
+#start the agent to check everything is ok
+~/.platformio/penv/bin/pio remote agent start
+
+# AUTOSTART ON BOOT for OpenRC init daemon #
+*in /etc/init.d/pioremoteagent
+
+#!/sbin/openrc-run    
+
+command_user=platform                                        
+name="Pio Remote Agent"                               
+command="/home/platform/.platformio/penv/bin/pio"                 
+command_args="remote agent start"
+pidfile="/run/$RC_SVCNAME.pid"
+command_background=true
+          
+depend() {
+  need net
+}
+
+#exit from the editor and finalize:
+chmod +x /etc/init.d/pioremoteagent
+rc-update add pioremoteagent boot
+#restart system
+reboot
+#check if in execution
+ps | grep pioremoteagent
+#connect with PIO IDE and test
