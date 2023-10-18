@@ -42,6 +42,7 @@ chmod +x /etc/init.d/pioremoteagent
 rc-update add pioremoteagent boot
 #restart system
 reboot
-#check if in execution
+#check everything is ok
 ps | grep pioremoteagent
-#connect with PIO IDE and test
+/home/platform/.platformio/penv/bin/pio remote agent list
+#connect with PIO IDE and test...
