@@ -13,8 +13,8 @@ openssl genrsa -out privatekey.pem 2048
 openssl pkey -pubout -in privatekey.pem -out publickey.pem
 openssl rsa -pubout -in privatekey.pem -out publickey.pem
 
-# public key should start with -----BEGIN RSA PRIVATE KEY-----
-# private key with  -----BEGIN PUBLIC KEY-----
+# public key should start with -----BEGIN RSA PUBLIC KEY-----
+# private key with  -----BEGIN PRIVATE KEY-----
 # is the private key correct?
 openssl rsa -check -in privatekey.pem
 
