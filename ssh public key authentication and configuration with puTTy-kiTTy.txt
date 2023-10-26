@@ -1,0 +1,32 @@
+## Quick how-to for SSH public key authentication and configuration on PUTTY/KITTY software ##
+
+## typical key type format cheat sheet ##
+# RSA public:  ssh-rsa xxxxxxxxxxxxxxx user@hostmachine"
+# PEM private: -----BEGIN OPENSSH PRIVATE KEY-----  key..  -----END OPENSSH PRIVATE KEY-----
+# PPK public:  ---- BEGIN SSH2 PUBLIC KEY ----  Comment:..  key..   ---- END SSH2 PUBLIC KEY ----
+# PPK private: PuTTY-User-Key-File-3: ssh-rsa  Encryption:..  Comment:..  Public-Lines:..  key..  Private-MAC:..
+
+## on puttyGEN/kittyGEN:
+
+"Generate" public/private key or load an existing private key (usually in RSA public key format)
+
+copy private key format = ssh-rsa xxxxxxxxxxxxx user@clienthost
+..and paste in /username/.ssh/authorized_keys of your server
+
+save private+public key in ppk format on client computer
+
+## on kiTTY/puTTY:
+
+create a profile with server name and setup keyfile:
+in Session -> host name: user@ip - session name: whatever
+in Connection -> SSH -> Auth -> Private key for authentication
+             put here the private key PPK file you saved before
+in Session -> SAVE PROFILE
+
+
+## on your Linux box:
+*in /etc/ssh/sshd_config:
+#enable public key auth
+PubkeyAuthentication yes
+#disable manual password auth (optional, for hardening)
+PasswordAuthentication no
