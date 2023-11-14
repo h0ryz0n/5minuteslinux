@@ -1,0 +1,23 @@
+## INSTALL A LIGHT XFCE ENRIVONMENT ON YOUR LINUX SERVER and a REMOTE RDP AGENT, the minimal way ##
+## flawless on DEBIAN/UBUNTU, works on derived/other distros too ##
+
+## SERVER SIDE
+#update everything
+apt update && apt full-upgrade -y
+#minimal
+apt install xfce4 xrdp -y
+#recommended
+apt install xfce4-goodies -y
+
+## CLIENT SIDE: LINUX
+apt install remmina
+; on remmina, choose RDP protocol, insert IP and go...
+## CLIENT SIDE: WINDOWS
+; built-in remote desktop client
+## CLIENT SIDE: ANDROID
+; com.microsoft.rdc.androidx
+
+# TROUBLESHOOT
+# Remmina keyboard layout problems
+; preferences -> RDP -> keyboard layout -> set your keyboard layout or turn on "use client keyboard mapping"
+; restart remmina
