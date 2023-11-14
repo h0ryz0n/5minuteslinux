@@ -9,9 +9,22 @@ apt install xfce4 xrdp -y
 #recommended
 apt install xfce4-goodies -y
 
-## CLIENT SIDE: LINUX
+## CLIENT SIDE: LINUX - REMMINA
 apt install remmina
 ; on remmina, choose RDP protocol, insert IP and go...
+#folder sharing
+; some useful connection profile options
+; General
+Shared folder: /home/...
+; Advanced
+Audio: local <- redirects all audio on local device
+Audio redirect: you can choose the device /dev/ where to redirect audio in/out
+Printer share: tested on linux & windows
+UDP Protocol: speeds up everything if connection is stable
+USB Redirect: 00aa:11bb,22bb:33cc <- you can redirect usb devices to remote environment
+# type `lsusb` in linux shell to obtain the idVendor:idProduct of devices
+
+
 ## CLIENT SIDE: WINDOWS
 ; built-in remote desktop client
 ## CLIENT SIDE: ANDROID
