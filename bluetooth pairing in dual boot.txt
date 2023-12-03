@@ -71,4 +71,4 @@ nano /var/lib/bluetooth/MAC:ADAPTER/MAC:DEVICE/info
 # after overwriting all the codes with new ones you retrieved, restart bt service
 sudo systemctl restart bluetooth
 
-## this quick overview explains how to copy the keys from win10 to inux, but you can do viceversa: remember always to make backups of modified files first
+## this quick overview explains how to copy the keys from win10 to linux, but you can do viceversa: remember always to make backups of modified files first
