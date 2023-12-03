@@ -18,10 +18,10 @@ http://pogostick.net/~pnh/ntpasswd/
 
 # WHAT DO TO NOW?
 
-# from windows:
+# boot to windows:
 pair and connect to bt device
 
-# from linux:
+# boot to linux:
 install chntpw
 mount windows partition drive
 copy /Windows/System32/config/system (or SYSTEM) to a temp folder
