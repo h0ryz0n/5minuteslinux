@@ -1,0 +1,74 @@
+### BLUETOOTH TROUBLESHOOTING: connecting devices among different systems with the same adapter a.k.a. 'Bluetooth Dual Boot' ###
+# RATIO
+this issue emerged when I was tinkering with a bluetooth device using python and I tried executing the same code on my dual boot pc (win10 and linux)
+
+# VERY QUICK OVERVIEW
+bluetooth devices do generate keys for every mac paired, this mac is stored in the machine's operating system as well
+so when two or more OS try to pair with the same bluetooth adapter on the same device, conflicts do generate
+how the end devices handle this conflict, depends on the end device firmware
+to avoid troubles, it's best to copy the same pairing keys between OS that use the same adapter
+
+# SOURCES
+https://pypi.org/project/bt-dualboot/
+https://blog.keepcoding.ch/?p=6644
+https://gist.github.com/madkoding/f3cfd3742546d5c99131fd19ca267fd4
+https://wiki.archlinux.org/title/bluetooth
+https://unix.stackexchange.com/questions/255509/bluetooth-pairing-on-dual-boot-of-windows-linux-mint-ubuntu-stop-having-to-p
+http://pogostick.net/~pnh/ntpasswd/
+
+# WHAT DO TO NOW?
+
+# from windows:
+pair and connect to bt device
+
+# from linux:
+install chntpw
+mount windows partition drive
+copy /Windows/System32/config/system (or SYSTEM) to a temp folder
+# from temp folder:
+chntpw -e system
+# from chntpw console:
+cd CurrentControlSet\Services\BTHPORT\Parameters\Keys
+(if doesn't work use ControlSet001)
+#list bt adapters
+ls
+#bt adapter you have paired the device in Windows
+cd xxxxxxxxxxxx
+#mac addresses of device paired
+ls
+cd xxxxxxxxxxxx
+ls
+#show codes
+hex LTK
+hex IRK
+hex EDIV
+hex ERand
+
+## take note of the 'XX's hex codes in the middle
+## outputs will be like:
+
+# peripheral Long Term Key / slave Long Term Key
+Value <LTK> of type REG_BINARY (3), data length 16 [0x10]
+:00000  XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX ..........
+
+# Identify Resolving Key
+Value <IRK> of type REG_BINARY (3), data length 16 [0x10]
+:00000  XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX  ...........
+
+# EDiv + Rand of sLTK+pLTK
+Value <EDIV> of type REG_DWORD (4), data length 4 [0x4]
+:00000  XX XX XX XX                                     ....
+
+Value <ERand> of type REG_QWORD (b), data length 8 [0x8]
+:00000  XX XX XX XX XX XX XX XX                         ........
+
+## go back to linux:
+pair the device and try to connect
+
+# then:
+su
+nano /var/lib/bluetooth/MAC:ADAPTER/MAC:DEVICE/info
+# after overwriting all the codes with new ones you retrieved, restart bt service
+sudo systemctl restart bluetooth
+
+## this quick overview explains how to copy the keys from win10 to inux, but you can do viceversa: remember always to make backups of modified files first
