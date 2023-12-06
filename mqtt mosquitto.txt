@@ -1,6 +1,7 @@
 #MQTT: minimalistic no-hassle no-frills mqtt messaging server for resource-constraint systems
 OS: tested on alpine linux (alpine-virt kernel on a minimal vm), but works on other systems as well
-REQUIREMENTS: 512MB ram + 500MB disk space
+REQUIREMENTS: recommended 512MB ram + 500MB disk space -- minimum 256MB ram + 128MB disk
+TODO: mqtt websockets
 
 # INSTALL #
 #update everything
@@ -26,10 +27,19 @@ mosquitto_passwd -c /etc/mosquitto/pwfile user1
 mosquitto_passwd -c /etc/mosquitto/pwfile user1 password1
 #add user
 mosquito_passwd /etc/mosquitto/pwfile user2
+#from plain text file
+#generate a plain text file with your favorite editor
+*in /etc/mosquitto/pwfile:
+user1:pwd1
+user2:pwd2
+user3:pwd3
+#then hash passwords
+mosquitto_passwd -U /etc/mosquitto/pwfile
 #enable user/pass authentication in mosquitto daemon -> this disables anonymous access
 *in /etc/mosquitto/mosquitto.conf
 allow_anonymous false
 password_file /etc/mosquitto/pwfile
+
 
 # AUTH: TLS SUPPORT AND CERTIFICATES
 # you need: server keys, server crt signed by a CA
