@@ -59,6 +59,10 @@ to see all messages in syslog:
 *in /etc/mosquitto/mosquitto.conf
 log_type all
 connection_messages true
+#to test mosquitto configuration file, stop service and start in foreground
+rc-service mosquitto stop
+sudo -u mosquitto /usr/bin/mosquitto -c /etc/mosquitto/mosquitto.conf -v
+
 
 # SOME PRACTICES FOR MEMORY HANDLING IN RESOURCE CONSTRAINT SYSTEMS
 *in /etc/mosquitto/mosquitto.conf
