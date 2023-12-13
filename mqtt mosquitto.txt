@@ -39,6 +39,8 @@ mosquitto_passwd -U /etc/mosquitto/pwfile
 *in /etc/mosquitto/mosquitto.conf
 allow_anonymous false
 password_file /etc/mosquitto/pwfile
+#add users to existing passwd file
+mosquitto_passwd -b /etc/mosquitto/pwfile newuser111 newpassword111
 
 
 # AUTH: TLS SUPPORT AND CERTIFICATES
