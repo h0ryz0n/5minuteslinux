@@ -93,6 +93,10 @@ openssl x509 -text -noout -in domain.crt
 # Verify a certificate signed by CA
 openssl verify -verbose -CAFile ca.crt domain.crt
 
+#### CHECK CERTIFICATE WITH OPENSSL ###
+
+openssl s_client -connect <address>:<port>
+
 ## sources and additional info:
 https://www.openssl.org/docs/manmaster/man1/openssl.html
 https://rietta.com/blog/openssl-generating-rsa-key-from-command/
