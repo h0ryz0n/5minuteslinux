@@ -1,0 +1,31 @@
+# How to have host access and internet access for your VM Linux appliance in VirtualBox
+# in 30 seconds
+
+## VBox setup ##
+VM -> Settings -> Network
+
+[Adapter 1]
+NAT
+
+[Adapter 2]
+Attached to: Host-only Adapter
+Name: VirtualBox Host-Only Ethernet Adapter
+
+## from VBox, reboot VM and get root ##
+
+# check network interfaces:
+
+> ip l
+
+1: lo: ....
+2: enp0s3: ... state UP     # this is the NAT
+3: enp0s8: ... state DOWN   # this is the host-only
+
+> cp /etc/network/interfaces /etc/network/interfaces.backup
+> echo "allow-hotplug enp0s8" >> /etc/network/interfaces
+> echo "iface enp0s8 inet dhcp" >> /etc/network/interfaces
+> systemctl restart networking.service
+#get the ip with:
+> ip a s enp0s8 | grep inet
+
+# you can now log in to your host service via ssh or whatever..
