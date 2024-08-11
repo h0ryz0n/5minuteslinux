@@ -1,5 +1,6 @@
-# How to have host access and internet access for your VM Linux appliance in VirtualBox
-# in 30 seconds
+# How to have host access and internet access for your VM Linux/BSD appliance in VirtualBox in 30 seconds
+# make backups and restart network services afterwards
+# interface names are usually enp0sX but can be vtnetX if you choose to paravirtualize, examples have both
 
 ## VBox setup ##
 VM -> Settings -> Network
@@ -13,19 +14,55 @@ Name: VirtualBox Host-Only Ethernet Adapter
 
 ## from VBox, reboot VM and get root ##
 
-# check network interfaces:
 
-> ip l
+### Linux ### src for Debian: https://www.debian.org/doc/manuals/debian-reference/ch05.en.html ###
+
+# check network interfaces - usually enpXsX but can be vtnetX if you choose to paravirtualize
+
+> ip a
 
 1: lo: ....
-2: enp0s3: ... state UP     # this is the NAT
-3: enp0s8: ... state DOWN   # this is the host-only
+2: enp0s3: ... inet 10.0.X.X    ... state UP     # this is the NAT
+3: enp0s8: ... inet 192.168.X.X ... state DOWN   # this is the host-only
 
-> cp /etc/network/interfaces /etc/network/interfaces.backup
-> echo "allow-hotplug enp0s8" >> /etc/network/interfaces
-> echo "iface enp0s8 inet dhcp" >> /etc/network/interfaces
+*add where necessary in /etc/network/interfaces:
+allow-hotplug enp0s3
+iface enp0s3 inet dhcp
+allow-hotplug enp0s8
+iface enp0s8 inet dhcp
+
 > systemctl restart networking.service
-#get the ip with:
+#get the IPs with:
+> ip a s enp0s3 | grep inet
 > ip a s enp0s8 | grep inet
 
-# you can now log in to your host service via ssh or whatever..
+#check the NAT is the default route
+> ip r
+
+default via 10.0.2.2 dev enp0s3    # VBOX NAT interface
+
+
+
+### BSD ### src for FreeBSD: https://docs.freebsd.org/en/books/handbook/network/ ###
+
+# check network interfaces
+> ifconfig -a
+
+1: lo: ....
+2: vtnet0: ... inet 10.0.X.X    ... state UP     # this is the NAT
+3: vtnet1: ... inet 192.168.X.X ... state DOWN   # this is the host-only
+
+*add where necessary in /etc/rc.conf:
+ifconfig_vtnet0="DHCP"
+ifconfig_vtnet1="DHCP"
+
+> service netif restart && service routing restart && service dhclient restart vtnet0 && service dhclient restart vtnet1
+
+#check the NAT interface has the default route
+> netstat -rn
+
+Routing tables
+
+Internet:
+Destination        Gateway            Flags     Netif Expire
+default            10.0.x.x           UGS      vtnet0             # VBOX NAT Interface
