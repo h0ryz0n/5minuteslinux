@@ -39,7 +39,7 @@ iface enp0s8 inet dhcp
 #check the NAT is the default route
 > ip r
 
-default via 10.0.2.2 dev enp0s3    # VBOX NAT interface
+default via 10.0.x.x dev enp0s3    # VBOX NAT interface
 
 
 
