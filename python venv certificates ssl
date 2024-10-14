@@ -1,0 +1,17 @@
+### OpenSSL certificates in Python venvs ###
+
+# typical annoying SSL problem in venv, can happen when using certificates by certbot:
+HTTPSConnectionPool(host='xxxxxxxxx', port=443): Max retries exceeded with url: /uri/... (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1000)')))
+
+# WHY #
+# your intermediate issuer may be not in the cacert pem file of your venv #
+
+# CHECK #
+#activate venv
+python -c "import certifi;print(certifi.where());"
+# will give you something like: /workdir/venv/lib/python3.12/site-packages/certifi/cacert.pem #
+# you can check inside what issuer misses in your chain
+
+# FIX #
+# let your intermediate issuer pem certificate: 'chain.pem'
+openssl x509 -in ./chain.pem -text >> $VIRTUAL_ENV/lib/python3.12/site-packages/certifi/cacert.pem
