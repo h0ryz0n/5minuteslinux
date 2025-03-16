@@ -80,5 +80,7 @@ ExecStart=/usr/bin/amuled -c=/etc/amule -o /var/log/amule.log 2>&1
 # recommended only for troubleshooting/debug, lots of output
 
 ! do not forget to open ports on your firewall to avoid a low ID !
+TCP Port: in [eMule] Port=xxxx
+UDP Port: in [eMule] UDPPort=xxxx
 
 source: http://wiki.amule.org/wiki/Main_Page
