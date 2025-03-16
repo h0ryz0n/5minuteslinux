@@ -1,0 +1,83 @@
+HOW TO PROPERLY SETUP AMULE DAEMON + WEB SERVER ON LINUX IN A JIFFY IN A FLASH
+
+os: debian bookworm
+
+# in this tutorial we assume:
+# /etc/amule will be configuration directory
+# /var/lib/amule will be the variable file/temp/incoming file directory
+# you are root
+
+# install the daemon
+apt install amule-daemon
+# create group and a system user for low privileges execution, with home in /var/lib/amule, without nologin
+groupadd amule
+useradd -r -m -d /var/lib/amule -s /usr/sbin/nologin -g amule amule
+# create directory and file structure and set correct permissions
+mkdir /etc/amule
+touch /etc/amule/amule.conf
+mkdir /var/lib/amule/{Incoming,Temp}
+chown -R amule:amule /etc/amule /var/lib/amule
+chmod -R 750 /var/lib/amule
+chmod -R 750 /etc/amule
+# generate md5 password for gui and web access, here we generate an unique one, valid both for external (amuleGUI,amuleCMD) and web access
+echo -n "yourpassword" | md5sum
+
+# first configuration
+*in /etc/amule/amule.conf:
+
+[eMule]
+IncomingDir=/var/lib/amule/Incoming
+TempDir=/var/lib/amule/Temp
+[WebServer]
+Enabled=1
+Password=yourmd5password
+Port=4711               # web port, you have to access via browser
+[ExternalConnect]
+AcceptExternalConnections=1 
+ECPort=4712			# external port, for amuleCMD, amuleGUI
+ECPassword=yourmd5password
+ECAddress=localhost      # (optional) I use to disable this port because I don't use amuleCMD/GUI and if you accidentally access this port via browser, chances are amule-daemon will crash
+
+# first start: see the output and test the web browser access on the web port you set
+sudo -u amule /usr/bin/amuled -c=/etc/amule -o
+# let it work a bit, then Ctrl+C and exit
+# check if config file has been populated with
+cat /etc/amule/amule.conf
+
+# if everything works, we can go further on setting up system service
+# there is a sysv /etc/init.d/amule-daemon script, but we want to properly set a sysd service file
+touch /etc/systemd/system/amule-daemon-sysd.service
+chmod 644 /etc/systemd/system/amule-daemon-sysd.service
+
+in /etc/systemd/system/amule-daemon-sysd.service:
+[Unit]
+Description=aMule Daemon (P2P Client)
+After=network.target
+
+[Service]
+User=amule
+Group=amule
+ExecStart=/usr/bin/amuled -c=/etc/amule -o
+ExecStop=/usr/bin/amulecmd -P yourpassword -c "shutdown"
+Restart=on-failure
+WorkingDirectory=/var/lib/amule
+Nice=10
+LimitNOFILE=4096
+
+[Install]
+WantedBy=multi-user.target
+
+# enable & start
+systemctl enable amule-daemon-sysd
+systemctl start amule-daemon-sysd
+
+# sysd log
+journalctl -xe -u amule-daemon-sysd
+journalctl -xf -u amule-daemon-sysd
+
+# if you want to keep a log file, in the systemd use this one:
+ExecStart=/usr/bin/amuled -c=/etc/amule -o /var/log/amule.log 2>&1
+# recommended only for troubleshooting/debug, lots of output
+
+
+source: http://wiki.amule.org/wiki/Main_Page
