@@ -1,0 +1,24 @@
+Just a quick, raw cheat sheet of cpu frequencies scaling and monitoring  
+works on debian/_buntu/arch/fedora & derivatives  
+  
+## CPU info & monitoring  
+cpupower frequency-info  #drivers: acpi-cpufreq: old legacy driver - amd-pstate/intel-pstate are newer ones  
+cpupower monitor  
+cat /proc/cpuinfo | grep "cpu MHz"  
+sensors  
+powertop  
+turbostat  
+  
+## governors & scaling frequencies  
+cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor #base governor  
+cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_max_freq  
+cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_min_freq  
+cat /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference #amd epp  
+  
+## example of setting base governor & amd pstate epp  
+cpupower frequency-set --min 1.72GHz -max 3.33GHz --governor performance  #base governor  
+echo performance | tee /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference  #enhanced cpu firmware governor  
+  
+## TIPS & TRICKS  
+avoid setting min frequency lower than the specified "lowest non-linear frequency", usually around 1.72/2GHz: it causes deep cpu c-states, audio stuttering and random micro-freezes  
+  
