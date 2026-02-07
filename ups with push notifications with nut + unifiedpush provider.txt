@@ -85,6 +85,5 @@ timeout 5 curl -s -k -X POST -d "$MSG" "$URL" >/dev/null 2>&1 &
 # exit immediately to avoid blocking upsmon
 exit 0
 
-
-# to test
+if you want to test if the wrapper script works:
 UPSNAME="apc-backup" NOTIFYTYPE="LOWBATT" HOSTNAME="mydumbserver" BCHARGE="42" LOADPCT="35" /usr/local/bin/ups-push.sh "test: UPS battery is OK"
