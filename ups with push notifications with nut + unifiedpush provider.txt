@@ -59,30 +59,44 @@ NOTIFYFLAG NOTBYPASS    SYSLOG+WALL+EXEC
 
 how to get the push notifications:
 
-add a new channel in nextpush & take note of its endpoint url
-(long press on nextpush & check on nextcloud app if the channel has been added)
+- add a new channel in nextpush & take note of its endpoint url (long press on nextpush & check on nextcloud app if the channel has been added)
+
 
 *in /etc/nut/upsmon.conf:
+
 NOTIFYCMD /usr/local/bin/ups-push.sh
 
-now we'll create our wrapper script
+now we'll create our wrapper script:
 
-*in /usr/local/bin/ups-push.sh
+
+*in /usr/local/bin/ups-push.sh:
 
 #!/bin/bash
 
-# Nextcloud push endpoint:
-URL="https://nextcloud.mydumbserver.cow/..../endpoint"
+#setup
+UPS="tecnoware@localhost"  #your ups
+URL="https://my.server.cow/uppush/push/xxxxxxxx"  #your unifiedpush endpoint
 
+#fetching ups data and filtering data -> you can add more data
+UPS_DATA=$(upsc "$UPS" 2>/dev/null)
+BCHARGE=$(awk -F': ' '/^battery\.charge/ {print $2}' <<< "$UPS_DATA")
+BCHARGE=${BCHARGE:-N/A}
+LOADPCT=$(awk -F': ' '/^ups\.load/ {print $2}' <<< "$UPS_DATA")
+LOADPCT=${LOADPCT:-N/A}
+STATUS=$(awk -F': ' '/^ups\.status/ {print $2}' <<< "$UPS_DATA")
+STATUS=${STATUS:-UNKNOWN}
+
+# build message
 # $1 = full NOTIFYMSG text
-# $UPSNAME, $NOTIFYTYPE, $HOSTNAME, $BCHARGE, $LOADPCT are inherited from upsmon environment
-MSG="$HOSTNAME - UPS $UPSNAME - $NOTIFYTYPE - $1"
-MSG="$MSG - Battery: ${BCHARGE:-N/A}% - Load: ${LOADPCT:-N/A}%"
+MSG="$HOSTNAME - UPS $UPSNAME - $NOTIFYTYPE - $1"  #variables coming from UPSMON
+MSG="$MSG - Status: $STATUS - Battery: $BCHARGE% - Load: $LOADPCT%" 
+
 
 # send asynchronously with timeout 5s
 timeout 5 curl -s -k -X POST -d "$MSG" "$URL" >/dev/null 2>&1 &
 # exit immediately to avoid blocking upsmon
 exit 0
 
-if you want to test if the wrapper script works:
-UPSNAME="apc-backup" NOTIFYTYPE="LOWBATT" HOSTNAME="mydumbserver" BCHARGE="42" LOADPCT="35" /usr/local/bin/ups-push.sh "test: UPS battery is OK"
+
+if you want to test if the wrapper script works, type on shell:
+HOSTNAME="mydumbserver" UPSNAME="apc-whatever" NOTIFYTYPE="ONBATT" /usr/local/bin/ups-push.sh "test: UPS is on battery"
