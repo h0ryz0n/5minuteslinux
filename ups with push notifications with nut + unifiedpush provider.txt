@@ -1,0 +1,90 @@
+setting up NUT with optional push notifications with nextcloud on your phone, in no time  
+  
+  
+assuming you have:  
+an UPS ;-)  
+nut/nut-server/nut-monitor installed  
+optional:  
+curl for push notifications sending  
+nextcloud with unifiedpush provider  
+nextpush on your phone  
+  
+I'm using a Tecnoware UPS, cheap one but it does his job  
+for replacement, get a YUASA NP7–12L (L=faston 6,3 mm)  
+  
+*in /etc/nut/nut.conf  
+  
+MODE=standalone  
+  
+  
+*in /etc/nut/ups.conf  
+  
+[tecnoware]
+        #driver = "blazer_usb" #it works, but it's considered deprecated
+        driver = "nutdrv_qx"
+        port = "auto" # for usb
+        desc = "Tecnoware UPS ERA PLUS 1100"
+
+
+*in /etc/nut/upsd.users
+
+[admin]
+password = mydumbpassword
+actions = SET
+instcmds = ALL
+upsmon = master
+
+
+*in /etc/nut/upsmon.conf
+
+MONITOR tecnoware@localhost 1 admin mydumbpassword master
+
+#all my events - feel free to remove/add
+NOTIFYFLAG ONLINE       SYSLOG+WALL
+NOTIFYFLAG ONBATT       SYSLOG+WALL
+NOTIFYFLAG LOWBATT      SYSLOG+WALL
+NOTIFYFLAG FSD          SYSLOG+WALL
+NOTIFYFLAG COMMOK       SYSLOG+WALL
+NOTIFYFLAG COMMBAD      SYSLOG+WALL
+NOTIFYFLAG SHUTDOWN     SYSLOG+WALL
+NOTIFYFLAG REPLBATT     SYSLOG+WALL
+NOTIFYFLAG NOCOMM       SYSLOG+WALL
+NOTIFYFLAG NOPARENT     SYSLOG+WALL
+NOTIFYFLAG CAL          SYSLOG+WALL
+NOTIFYFLAG OFF          SYSLOG+WALL
+NOTIFYFLAG NOTOFF       SYSLOG+WALL
+NOTIFYFLAG BYPASS       SYSLOG+WALL
+NOTIFYFLAG NOTBYPASS    SYSLOG+WALL
+
+
+
+how to get the push notifications:
+
+add a new channel in nextpush & take note of its endpoint url
+(long press on nextpush & check on nextcloud app if the channel has been added)
+
+*in /etc/nut/upsmon.conf:
+NOTIFYCMD /usr/local/bin/ups-push.sh
+
+now we'll create our wrapper script
+
+*in /usr/local/bin/ups-push.sh
+
+#!/bin/bash
+
+# Nextcloud push endpoint:
+URL="https://nextcloud.mydumbserver.cow/..../endpoint"
+
+# $1 = full NOTIFYMSG text
+# $UPSNAME, $NOTIFYTYPE, $HOSTNAME, $BCHARGE, $LOADPCT are inherited from upsmon environment
+MSG="$HOSTNAME - UPS $UPSNAME - $NOTIFYTYPE - $1"
+MSG="$MSG - Battery: ${BCHARGE:-N/A}% - Load: ${LOADPCT:-N/A}%"
+
+# send asynchronously with timeout 5s
+timeout 5 curl -s -k -X POST -d "$MSG" "$URL" >/dev/null 2>&1 &
+# exit immediately to avoid blocking upsmon
+exit 0
+
+
+# to test
+UPSNAME="apc-backup" NOTIFYTYPE="LOWBATT" HOSTNAME="mydumbserver" BCHARGE="42" LOADPCT="35" /usr/local/bin/ups-push.sh "test: UPS battery is OK"
