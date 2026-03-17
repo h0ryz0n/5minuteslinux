@@ -1,0 +1,49 @@
+it's 2026, RAM is on all times high
+you missed the buy opportunity and now your system freezes randomly because you are out of memory
+
+waiting for a cheap ram, here are some quick tricks which trade-off some cpu clocks to increase virtual memory
+
+you can use one of two easy and quick solutions
+1. ZRAM (high priority) + SWAP FILE (low priority): you have a compressed ram drive with a fallback swap file
+2. ZSWAP: all in one tool embedded in linux kernel, it compresses swap pages before putting them in memory or disk
+works out of the box, but links provided to easy customize options like space and compression algorythm
+
+# first of all: check swaps actually in use
+swapon
+
+# requirement: physical swap file (if you don't have any)
+fallocate -l 4G /swapfile   #allocate space
+chmod 600 /swapfile     #set the correct permissions
+mkswap /swapfile    #treat as swap area
+swapon /swapfile    #enable
+swapon      #test if it's actived
+
+*in /etc/fstab:
+/swapfile none swap sw 0 0
+
+# optional: you can avoid some filesystem overhead by using a dedicated partition for the swapfile
+
+
+## ZRAM solution - https://github.com/systemd/zram-generator
+
+#install zram
+apt install systemd-zram-generator
+
+#check priorities
+swapon
+
+#you should see
+
+NAME       TYPE      SIZE USED PRIO
+/swapfile  file        8G   0B   -2   [low priority]
+/dev/zram0 partition   4G   0B  100   [high priority]
+
+
+## ZSWAP solution - https://docs.kernel.org/admin-guide/mm/zswap.html
+
+*in /etc/default/grub:
+in GRUB_CMDLINE_LINUX_DEFAULT, add the parameter "zswap.enabled=1"
+
+# update changes in grub file
+update-grub
+# reboot
