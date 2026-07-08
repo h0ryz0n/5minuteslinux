@@ -4,6 +4,7 @@
 as Wireguard implements a P2P oriented vpn, it may not be technically correct to talk about server and client entities
 but some scenarios have one or few reachable peers with static IPs/DDNS and a bunch of road warriors with dynamic IPs behind one or multiple NATs
 hereby we will name "server" a primary peer which is reachable and "client" as an entity behind NAT, not directly reachable by other peers
+sources: https://www.wireguard.com/quickstart/ https://wiresock.net/documentation/wireguard/config.html
 
 # minimum requirements:
 1 vCore, 128 MB ram, 1 GB disk space
@@ -23,6 +24,8 @@ iptables
 # generate node keys and set chmod 600
 wg genkey > privatekey
 wg pubkey < privatekey > publickey
+# optional symmetric preshared key
+wg genpsk > presharedkey
 
 # setup the network interface for the wg tunnel
 in /etc/network/interfaces:
@@ -39,6 +42,8 @@ in /etc/wireguard/wg0.conf:
 [Interface]
 ListenPort = ...
 PrivateKey = ...
+PresharedKey = ...
+
 
 [Peer]
 PublicKey = ...
@@ -47,8 +52,8 @@ AllowedIPs = 172.16.0.11/32
 [Peer]
 PublicKey = zzzzzz
 AllowedIPs = 172.16.0.12/32
-  
 ...
+
 
 # wireguard debug on dmesg (removes at every reboot)
 echo module wireguard +p > /sys/kernel/debug/dynamic_debug/control
