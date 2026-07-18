@@ -1,0 +1,50 @@
+OPENWRT low footprint FILE SERVER
+using built in uHTTPd, SFTP, SMBD based on your choice
+for small routers with strict cpu/ram constraints, tested succesfully on a GL.iNET Spitz x750 with single core QCA9533 650MHz MIPS and 128MB ram with a 8GB sd card
+
+req: flash drive usb/sdcard formatted with f2fs (preserve flash health)
+warn: some openwt routers don't have hotswap
+
+### REQUIREMENTS
+on openwrt:
+- install kmod-usb-storage, kmod-fs-f2fs, block-mount
+you may need other modules, see openwrt wiki for your hardware
+- install luci-app-ksmbd (for samba protocol))
+- install openssh-sftp-server (if you want to handle files through ssh too, because stock dropbear doesn't have sftp support)
+
+### MOUNTING
+ssh in openwrt router:
+#check if your flash drive is detected, you may see something like /dev/sda1 UUID=xxx VERSION=xx
+block info
+#if detected:
+block detect > /etc/config/fstab
+create your /mnt/mount_directory, we'll assume /mnt/sdcard
+in LUCI, go System -> Mount Points -> Mount Points (ADD)
+you will see your drive mounted: go to Edit and place your mount point
+
+### SET UP SMB
+# ksmbd is a low footprint alternative to samba
+on LUCi, go to Services -> Network Shares
+set lan/workgroup
+add your share: use your shared path, like /mnt/sdcard/pub
+and set access policy accordingly
+
+### SET A HTTP PUBLIC SHARE DIRECTORY
+# zero footprint, http server using built-in uhttpd
+optionally, you can create a public http read only access on your /mnt/sdcard/pub directory
+#ssh to openwrt and link to uhttpd main directory
+ln -l /mnt/sdcard/pub /www/pub
+a restart of uhttpd or router may be needed
+now you can access files with https://router.ip/www/pub
+
+###UPLOAD
+based on your setup, you would be able to:
+- upload through smbd network shares
+- upload through sftp, handled by dropbear
+don't forget to add keys in openwrt -> system -> administration -> ssh-keys if you want passwordless auth
+on android you can use mixplorer -> create sftp storage 'sftp://router.ip' and add advanced settings:
+remote=/www/pub
+for keys:
+key_path=/sdcard/.ssh/id_rsa or key_base64=
+to convert your private key in base64: base64 -w 0 ~/.ssh/id_rsa
+
