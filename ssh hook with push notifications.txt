@@ -1,0 +1,28 @@
+# setting up push notifications on your phone at every interactive SSH login, in 2 steps
+
+assuming you have a push provider available and a push distributor on your phone
+example:
+- Nextcloud UnifiedPush Provider: https://apps.nextcloud.com/apps/uppush (needs NextCloud)
+- NextPush: https://f-droid.org/packages/org.unifiedpush.distributor.nextpush
+
+# on your phone:
+open NextPush, create a new notifications channel and take note of the endpoint address
+
+# on your server (debian/*buntu):
+
+*in /etc/profile.d/ssh-login-hook.sh:
+
+#!/bin/bash
+
+#push notify on
+if [ -n "$SSH_CLIENT" ]; then
+curl -s {"https://your.endpoint/address"} -d "${USER}@$(hostname -f) has logged in via SSH." > /dev/null
+else
+curl -s {"https://your.endpoint/address"} -d "${USER}@$(hostname -f) has logged in locally." > /dev/null
+fi
+
+-----
+
+
+the login sequence will be:
+- user authentication ok -> shell init -> reads global config files -> your command hook -> prompt ready
