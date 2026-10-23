@@ -16,13 +16,12 @@ open NextPush, create a new notifications channel and take note of the endpoint 
 
 #push notify on
 if [ -n "$SSH_CLIENT" ]; then
-curl -s {"https://your.endpoint/address"} -d "${USER}@$(hostname -f) has logged in via SSH." > /dev/null
+curl --max-time 2 -s {"https://your.endpoint/address"} -d "${USER}@$(hostname -f) has logged in via SSH." > /dev/null
 else
-curl -s {"https://your.endpoint/address"} -d "${USER}@$(hostname -f) has logged in locally." > /dev/null
+curl --max-time 2 -s {"https://your.endpoint/address"} -d "${USER}@$(hostname -f) has logged in locally." > /dev/null
 fi
 
 -----
 
-
-the login sequence will be:
-- user authentication ok -> shell init -> reads global config files -> your command hook -> prompt ready
+the login sequence will be: user authentication ok -> shell init -> reads global config files -> your command hook -> prompt ready
+the "--max-time" parameter introduces a timeout in seconds in order for the system to avoid hanging on prompt init if for some reason the push provider endpoint is unreachable
